@@ -63,7 +63,7 @@ getHistoryData = () => {
     }
     // If there's more data points than we want to show let's calculate a ratio for filtering
     if(sliced_temps.length > number_of_ticks_to_show) {
-      ratio = Math.floor(sliced_temps.length / number_of_ticks_to_show);
+      ratio = Math.ceil(sliced_temps.length / number_of_ticks_to_show);
     }
     // Finally let's create a new data array with the previous configurations
     let temperature_data = sliced_temps.map(i => {
