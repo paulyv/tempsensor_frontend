@@ -3,7 +3,7 @@ import './App.css';
 import '../node_modules/react-vis/dist/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import moment from 'moment';
-import {XYPlot, XAxis, YAxis, LineSeries} from 'react-vis';
+import {XYPlot, XAxis, YAxis, LineSeries, HorizontalGridLines} from 'react-vis';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Row from 'react-bootstrap/Row';
@@ -58,8 +58,8 @@ getHistoryData = () => {
     let sliced_humids = this.state.chart_humidities;
 
     // If there's over 12h worth of data let's select only the newest 12h. (2min x 360) 
-    if(this.state.chart_temperatures.length > 360) {
-      sliced_temps = this.state.chart_temperatures.slice(Math.max(this.state.chart_temperatures.length - 360, 0))
+    if(sliced_temps.length >= 360) {
+      sliced_temps = sliced_temps.slice(Math.max(sliced_temps.length - 360, 0))
     }
     // If there's more data points than we want to show let's calculate a ratio for filtering
     if(sliced_temps.length > number_of_ticks_to_show) {
@@ -91,7 +91,7 @@ getHistoryData = () => {
 
   <Container fluid style={{marginLeft: '10px', marginTop: '20px'}}>
     <div className="title-area">
-      <h1>House climate</h1>
+      <h1>Asunnon sisäilma</h1>
     </div>
     <Row>
       <Col md={7} style={{maxWidth: "90%"}}>
@@ -103,7 +103,7 @@ getHistoryData = () => {
       </Col>
       <Col md={4}>
         <div className="temperature-area">
-          <h3>Current temperature</h3>
+          <h3>Lämpötila</h3>
           <h3>{this.state.temperature}&deg;C</h3>
         </div>
       </Col>
@@ -112,13 +112,13 @@ getHistoryData = () => {
       <Col md={7} style={{maxWidth: "90%"}}>
           <XYPlot xType="ordinal" height={200} width={750}>
             <XAxis title="" />
-            <YAxis title="Humidity %" />
+            <YAxis title="Kosteus %" />
             <LineSeries data={humidity_data} color="#ADD8E6"/>
           </XYPlot>
       </Col>
       <Col md={4}>
         <div className="humidity-area">
-          <h3>Current humidity</h3>
+          <h3>Ilmankosteus</h3>
           <h3>{this.state.humidity}%</h3>
         </div>
       </Col>
