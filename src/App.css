@@ -1,11 +1,10 @@
 body {
     background-color: whitesmoke;
-  }
+}
 
 .title-area {
     margin-bottom: 40px;
-   /*font-family: 'Courgette', cursive*/
-   font-family: 'Oswald', sans-serif;
+    font-family: 'Oswald', sans-serif;
 }
 
 .title-font {
