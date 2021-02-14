@@ -31,7 +31,7 @@ class App extends Component {
   }
 
   getCurrentSensorData = () => {
-    fetch('http://raspberrypi.local:3001/api/sensors/house/current_data')
+    fetch('http://tempsensor.local:3001/api/sensors/house/current_data')
       .then(response => response.json())
       .then(data => {
         this.setState({ humidity: data.humidity });
@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   getHistoryData = () => {
-    fetch('http://raspberrypi.local:3001/api/sensors/house/history_data')
+    fetch('http://tempsensor.local:3001/api/sensors/house/history_data')
       .then(response => response.json())
       .then(data => {
         this.setState({ chart_temperatures: data.temperatures });
