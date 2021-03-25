@@ -3,7 +3,7 @@ import './App.css';
 import '../node_modules/react-vis/dist/style.css';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import moment from 'moment';
-import { XYPlot, XAxis, YAxis, LineSeries, HorizontalGridLines } from 'react-vis';
+import { XYPlot, XAxis, YAxis, LineSeries } from 'react-vis';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Row from 'react-bootstrap/Row';
@@ -31,7 +31,7 @@ class App extends Component {
   }
 
   getCurrentSensorData = () => {
-    fetch('http://tempsensor.local:3001/api/sensors/house/current_data')
+    fetch('http://tempsensor.local:3000/api/sensors/house/current_data')
       .then(response => response.json())
       .then(data => {
         this.setState({ humidity: data.humidity });
@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   getHistoryData = () => {
-    fetch('http://tempsensor.local:3001/api/sensors/house/history_data')
+    fetch('http://tempsensor.local:3000/api/sensors/house/history_data')
       .then(response => response.json())
       .then(data => {
         this.setState({ chart_temperatures: data.temperatures });
@@ -53,43 +53,51 @@ class App extends Component {
   render() {
     let ratio = 1;
     let number_of_ticks_to_show = 15
-    let sliced_temps = this.state.chart_temperatures;
-    let sliced_humids = this.state.chart_humidities;
+    let temps = this.state.chart_temperatures;
+    let humids = this.state.chart_humidities;
+    let humidity_data;
+    let temperature_data;
 
-    // If there's over 12h worth of data let's select only the newest 12h. (2min x 360) 
-    if (sliced_temps.length >= 360) {
-      sliced_temps = sliced_temps.slice(Math.max(sliced_temps.length - 360, 0))
-    }
-    // If there's more data points than we want to show let's calculate a ratio for filtering
-    if (sliced_temps.length > number_of_ticks_to_show) {
-      ratio = Math.ceil(sliced_temps.length / number_of_ticks_to_show);
-    }
+    if(temps.length !== 0 && humids.length !== 0) {
 
-    // We want to reverse to get the newest ones, not the earliest ones
-    let reversed_temps = sliced_temps.reverse();
-    
-    // Finally let's create a new data array with the previous configurations
-    let reversed_temperature_data = reversed_temps.map(i => {
-      return { x: moment(new Date(i.x)).format("HH:mm"), y: i.y };
-    }).filter((item, index) => {
-      return index % ratio === 0;
-    })
-    // Lets reverse the list back right way
-    let temperature_data = reversed_temperature_data.reverse();
+      // If there's over 12h worth of data let's select only the newest 12h. (2min x 360) 
+      if (temps.length >= 360) {
+        temps = this.state.chart_temperatures.slice(Math.max(this.state.chart_temperatures.length - 360, 0))
+      }
 
-    // Let's do the same with humidity data
-    if (this.state.chart_humidities.length > 360) {
-      sliced_humids = this.state.chart_humidities.slice(Math.max(this.state.chart_humidities.length - 360, 0))
-    }
-    let reversed_humids = sliced_humids.reverse();
+      // If there's more data points than we want to show let's calculate a ratio for filtering
+      if (temps.length > number_of_ticks_to_show) {
+        ratio = Math.ceil(temps.length / number_of_ticks_to_show);
+      }
 
-    let reversed_humidity_data = reversed_humids.map(i => {
-      return { x: moment(new Date(i.x)).format("HH:mm"), y: i.y };
-    }).filter((item, index) => {
-      return index % ratio === 0;
-    })
+      // We want to reverse to get the newest ones, not the earliest ones
+      let reversed_temps = temps.reverse();
+      
+      // Finally let's create a new data array with the previous configurations
+      let reversed_temperature_data = reversed_temps.map(i => {
+        return { x: moment(new Date(i.x)).format("HH:mm"), y: i.y };
+      }).filter((item, index) => {
+        return index % ratio === 0;
+      })
 
-    let humidity_data = reversed_humidity_data.reverse();
+      // Lets reverse the list back right way
+      temperature_data = reversed_temperature_data.reverse();
+
+
+      // Let's do the same with humidity data
+      if (humids.length >= 360) {
+        humids = this.state.chart_humidities.slice(Math.max(this.state.chart_humidities.length - 360, 0))
+      }
+      let reversed_humids = humids.reverse();
+
+      let reversed_humidity_data = reversed_humids.map(i => {
+        return { x: moment(new Date(i.x)).format("HH:mm"), y: i.y };
+      }).filter((item, index) => {
+        return index % ratio === 0;
+      })
+
+      humidity_data = reversed_humidity_data.reverse();
+  }
 
     return (
       <>
